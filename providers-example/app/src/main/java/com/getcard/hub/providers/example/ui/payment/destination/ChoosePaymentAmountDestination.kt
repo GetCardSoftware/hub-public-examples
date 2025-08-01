@@ -110,7 +110,7 @@ fun PaymentDestination.ChoosePaymentAmountPaymentDestination.Composable(
                 onIconClick = {
                     onBackPressed()
                 },
-                label = "Valor da Transação"
+                label = "Transação"
             )
         }
     ) { innerPadding ->

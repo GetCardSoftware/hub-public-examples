@@ -20,8 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.getcard.hub.providers.example.R
-import com.getcard.hub.providers.example.ui.payment.components.TopBar
 import com.getcard.hub.providers.example.ui.payment.components.OptionButton
+import com.getcard.hub.providers.example.ui.payment.components.TopBar
 import com.getcard.hub.providers.example.ui.theme.ProvidersExampleTheme
 import com.getcard.hub.scopeprovider.pinpad.extension.toText
 import com.getcard.hubinterface.transaction.PaymentType
@@ -38,7 +38,7 @@ fun PaymentDestination.ChoosePaymentTypePaymentDestination.Composable(
                 onIconClick = {
                     onBackPressed()
                 },
-                label = "Forma de Pagamento"
+                label = "Transação"
             )
         }
     ) { innerPadding ->

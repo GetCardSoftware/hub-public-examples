@@ -18,6 +18,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.math.BigDecimal
 
+/**
+ * Essa classe é responsável por gerenciar o estado da operação de pagamento
+ * Ela irá receber os parâmetros vindos da UI, controlar o fluxo de telas
+ * e iniciar a transação quando todos os parâmetros necessários estiverem preenchidos.
+ */
 class TransactionViewModel : ViewModel() {
 
     private val activity = mutableStateOf<ComponentActivity?>(null)
@@ -32,7 +37,6 @@ class TransactionViewModel : ViewModel() {
     val amount = _amount.asStateFlow()
 
     private val _installments = MutableStateFlow(1)
-
 
     private val _paymentState = MutableStateFlow<PaymentState>(PaymentState.ChoosingPaymentAmount)
     val paymentState = _paymentState.asStateFlow()
@@ -86,6 +90,11 @@ class TransactionViewModel : ViewModel() {
         startTransaction()
     }
 
+    /**
+     * Função responsável por armazenar o contexto da activity que ela foi instanciada e
+     * definir o launcher que irá chamar a activity de pagamentos, recuperando o retorno dela
+     * e alterando o estado da operação de pagamento.
+     */
     fun setActivity(activity: ComponentActivity) {
         this.activity.value = activity
         transactionLauncher.value =
@@ -101,6 +110,11 @@ class TransactionViewModel : ViewModel() {
             }
     }
 
+    /**
+     * Função responsável por de fato iniciar uma transação. Utilizando o contexto
+     * da activity que ela foi instanciada, ela irá chamar a activity de pagamentos,
+     * chamada de [StartTransactionActivity].
+     */
     fun startTransaction() {
         val intent = Intent(activity.value, StartTransactionActivity::class.java)
         intent.putExtra(

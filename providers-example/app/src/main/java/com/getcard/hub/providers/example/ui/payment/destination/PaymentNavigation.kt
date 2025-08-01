@@ -16,6 +16,11 @@ fun PaymentNavigation(viewModel: TransactionViewModel) {
     val navController = rememberNavController()
     val paymentState by viewModel.paymentState.collectAsState()
 
+    /**
+     * Aqui nós iremos controlar o fluxo de telas com base no [PaymentState]
+     * Dessa forma, conseguimos remover toda a lógica de navegação da Activity e deixar
+     * centralizada em apenas um lugar.
+     */
     LaunchedEffect(paymentState) {
         when (paymentState) {
             is PaymentState.ChoosingPaymentType ->

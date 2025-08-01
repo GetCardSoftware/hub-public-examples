@@ -61,7 +61,7 @@ fun PaymentDestination.ChooseInstallmentNumberPaymentDestination.Composable(
                 onIconClick = {
                     onBackPressed()
                 },
-                label = "Quantidade de Parcelas"
+                label = "Transação"
             )
         }
     ) { innerPadding ->

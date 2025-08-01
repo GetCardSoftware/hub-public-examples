@@ -13,6 +13,13 @@ import com.getcard.hubinterface.transaction.TransactionParams
 import com.getcard.hubinterface.transaction.TransactionResponse
 import kotlinx.coroutines.launch
 
+/**
+ * Activity responsável por iniciar uma transação de fato utilizando
+ * o Provider de pagamentos.
+ * Elas recebe os parâmetros de autenticação e transação
+ * e chama o Provider para iniciar a transação. Ao final, retorna
+ * o resultado para a activity que à chamou.
+ */
 class StartTransactionActivity : ComponentActivity() {
 
     companion object {

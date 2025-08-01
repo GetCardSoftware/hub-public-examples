@@ -8,7 +8,7 @@ class Settings {
          * Insira aqui o seu token de autenticação obtido com o suporte da GetCard
          */
         const val AUTH_TOKEN =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6ImdldGNhcmRldiIsInRva2VuX3BheWxvYWQiOiJ7XCJjbnBqXCI6bnVsbCxcInRlcm1pbmFsSWRcIjpudWxsLFwicm9sZVwiOlwiQ09NUEFOWVwifSJ9.8O08SfVKmkVvOuAEF29vC7d6rOdJ636hv8T710XCJTA"
+            "SEU_TOKEN_DE_AUTENTICACAO"
 
         /**
          * Defina suas configurações aqui.
@@ -18,13 +18,16 @@ class Settings {
          * 'Configurações'
          * Exemplo de configurações do Scope:
          * https://doc-hubpay.tefbr.com.br/providers/scope/2.3.x/configuration
+         *
+         * PS: As configurações abaixo foram definidas para o Scope Provider,
+         * elas são referentes ao servidor do Scope e não ao Provider em sí.
          */
         val PROVIDER_CONFIG = PaymentProviderConfig.builder()
-            .setIp("177.72.161.156")
-            .setPort(2046u)
-            .setCompany("1283")
-            .setCompanyBranch("0001")
-            .setTerminal("003")
+            .setIp("SEU_IP")
+            .setPort(0u) // Porta do Provider
+            .setCompany("CODIGO_DA_EMPRESA")
+            .setCompanyBranch("CODIGO_DA_FILIAL")
+            .setTerminal("CODIGO_DO_TERMINAL/PDV")
             .build()
     }
 }

@@ -3,6 +3,10 @@ package com.getcard.hub.providers.example
 import java.text.NumberFormat
 import java.util.Locale
 
+/**
+ * Função auxiliar responsável por formatar o valor da transação de acordo com
+ * o padrão brasileiro.
+ */
 fun applyMoneyMask(text: String): String {
     val paddedText = text.padStart(3, '0')
 

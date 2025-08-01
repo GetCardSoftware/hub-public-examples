@@ -38,7 +38,7 @@ fun PaymentDestination.ChooseInstallmentTypePaymentDestination.Composable(
                 onIconClick = {
                     onBackPressed()
                 },
-                label = "Forma de Parcelamento"
+                label = "Transação"
             )
         }
     ) { innerPadding ->
