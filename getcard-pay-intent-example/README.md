@@ -1,16 +1,18 @@
-# Hub Providers Example
+# Hub GetCard Pay Example
 
 [![Kotlin](https://img.shields.io/badge/language-Kotlin-blue?logo=kotlin)](https://kotlinlang.org)
 [![Jetpack Compose](https://img.shields.io/badge/UI-Jetpack%20Compose-purple?logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
 [![minSdk](https://img.shields.io/badge/minSdk-24-brightgreen)](https://developer.android.com/about/versions/14/get)
 [![compileSdk](https://img.shields.io/badge/compileSdk-35-blueviolet)](https://developer.android.com/about/versions/14/get)
 
-
-Este projeto é um exemplo completo, desenvolvido com **Kotlin** e **Jetpack Compose**, para facilitar a integração com as bibliotecas da **GetCard Providers**.
+Este projeto é um exemplo completo, desenvolvido com **Kotlin** e **Jetpack Compose**, para
+facilitar a integração com as bibliotecas da **GetCard Providers**.
 
 ## 📦 Sobre o projeto
 
-Este exemplo demonstra como iniciar pagamentos e estornar transações utilizando nossas bibliotecas. É uma ótima referência para desenvolvedores que desejam entender a integração passo a passo com nossos serviços.
+Este exemplo demonstra como iniciar pagamentos e estornar transações utilizando nossas bibliotecas.
+É uma ótima referência para desenvolvedores que desejam entender a integração passo a passo com
+nossos serviços.
 
 ## ✅ Pré-requisitos
 
@@ -19,7 +21,7 @@ Este exemplo demonstra como iniciar pagamentos e estornar transações utilizand
 - Token de autenticação válido
 - Configurações do servidor Scope (caso use o `ScopeProvider`)
 - **ScopeProvider** suporta:
-  - `minSdk 24 (Android 7)`
+    - `minSdk 24 (Android 7)`
 
 ## 🚀 Como usar
 
@@ -61,7 +63,8 @@ git clone git@github.com:GetCardSoftware/hub-public-examples.git
 
 ## 📚 Leitura recomendada
 
-Analise o código fonte deste exemplo para compreender como as bibliotecas foram estruturadas e integradas. Isso irá te ajudar a replicar essa arquitetura na sua aplicação.
+Analise o código fonte deste exemplo para compreender como as bibliotecas foram estruturadas e
+integradas. Isso irá te ajudar a replicar essa arquitetura na sua aplicação.
 
 ## 📖 Bibliotecas utilizadas
 
@@ -71,4 +74,5 @@ Analise o código fonte deste exemplo para compreender como as bibliotecas foram
 
 ## 🛠 Suporte
 
-Se tiver dúvidas, entre em contato com nossa equipe técnica ou consulte a [documentação oficial](https://doc-hubpay.tefbr.com.br/).
+Se tiver dúvidas, entre em contato com nossa equipe técnica ou consulte
+a [documentação oficial](https://doc-hubpay.tefbr.com.br/).

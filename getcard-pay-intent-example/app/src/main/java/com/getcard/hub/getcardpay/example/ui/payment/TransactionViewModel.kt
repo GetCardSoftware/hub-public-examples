@@ -89,14 +89,19 @@ class TransactionViewModel : ViewModel() {
 
     /**
      * Função responsável por armazenar o contexto da activity que ela foi instanciada e
-     * definir o launcher que irá chamar a activity de pagamentos, recuperando o retorno dela
-     * e alterando o estado da operação de pagamento.
+     * definir o launcher que irá chamar a activity de pagamentos do GetCard Pay,
+     * recuperando o retorno dela e alterando o estado da operação de pagamento.
      */
     fun setActivity(activity: ComponentActivity) {
         this.activity.value = activity
         transactionLauncher.value =
             activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 val data = result.data
+                /**
+                 * Foram preenchido somentes os parâmetros mais simples da transação para simplificar
+                 * o exemplo. Os outros parâmetros podem ser encontrados na documentação:
+                 * https://doc-hubpay.tefbr.com.br/getcard-pay/1.0.x/intent/payment
+                 */
                 if (data != null) {
                     data.getStringExtra("RESULT_TRANSACTION_ID_EXTRA")
                         ?.also { Log.d("TestIntent", "RESULT_TRANSACTION_ID_EXTRA = $it") }
@@ -124,8 +129,8 @@ class TransactionViewModel : ViewModel() {
 
     /**
      * Função responsável por de fato iniciar uma transação. Utilizando o contexto
-     * da activity que ela foi instanciada, ela irá chamar a activity de pagamentos,
-     * chamada de [StartTransactionActivity].
+     * da activity que ela foi instanciada, ela irá chamar a activity de pagamentos
+     * do GetCard Pay
      */
     fun startTransaction() {
         if (activity.value == null) {
@@ -138,19 +143,49 @@ class TransactionViewModel : ViewModel() {
             "com.getcard.hub.getcardpayapp",
             "com.getcard.hub.getcardpayapp.ui.PaymentActivity"
         )
-        paymentIntent.putExtra("AMOUNT_EXTRA", 5000) // Valor da transação EM CENTAVOS
-        paymentIntent.putExtra("PAYMENT_TYPE_EXTRA", "CREDIT") // Tipo de pagamento
+        paymentIntent.putExtra("AMOUNT_EXTRA", _amount.value) // Valor da transação EM CENTAVOS
+        paymentIntent.putExtra(
+            "PAYMENT_TYPE_EXTRA",
+            _paymentType.value.toString()
+        ) // Tipo de pagamento
         paymentIntent.putExtra(
             "INSTALLMENT_TYPE_EXTRA",
-            "INSTALLMENT_BUYER"
+            _installmentType.value.toString()
         ) // Tipo de parcelamento
-        paymentIntent.putExtra("INSTALLMENT_NUMBER_EXTRA", 2) // Quantidade de parcelas
+        paymentIntent.putExtra(
+            "INSTALLMENT_NUMBER_EXTRA",
+            _installments.value
+        ) // Quantidade de parcelas
 
         if (paymentIntent.resolveActivity(activity.value!!.packageManager) != null) {
             Log.d("Exemplo", "Iniciando GetCardPay")
             transactionLauncher.value?.launch(paymentIntent)
         } else {
             Log.e("Exemplo", "Não existe GetCardPay nesse dispositivo")
+            Toast.makeText(activity.value, "GetCard Pay não instalado", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun doRefund(transactionId: String) {
+        if (activity.value == null) {
+            Log.e("TransactionViewModel", "Activity não inicializada!")
+            return
+        }
+        val refundIntent = Intent()
+        refundIntent.setClassName(
+            "com.getcard.hub.getcardpayapp",
+            "com.getcard.hub.getcardpayapp.ui.RefundActivity"
+        )
+        refundIntent.putExtra(
+            "TRANSACTION_ID_EXTRA",
+            transactionId
+        ) // ID da transação a ser estornada
+
+        if (refundIntent.resolveActivity(activity.value!!.packageManager) != null) {
+            Log.d("Teste", "Iniciando GetCardPay")
+            transactionLauncher.value?.launch(refundIntent)
+        } else {
+            Log.e("Teste", "Não existe GetCardPay nesse dispositivo")
             Toast.makeText(activity.value, "GetCard Pay não instalado", Toast.LENGTH_SHORT).show()
         }
     }

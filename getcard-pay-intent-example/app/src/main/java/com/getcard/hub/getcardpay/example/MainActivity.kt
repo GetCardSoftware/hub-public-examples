@@ -29,14 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.getcard.hub.getcardpay.example.ui.payment.PaymentActivity
 import com.getcard.hub.getcardpay.example.ui.theme.GetcardPayExampleTheme
-import com.getcard.hubinterface.transaction.PaymentType
-import java.math.BigDecimal
+import com.getcard.hubinterface.OperationStatus
+import com.getcard.hubinterface.transaction.TransactionResponse
 
 class MainActivity : ComponentActivity() {
 
-    private var lastTransactionRefundCode: String? = null
-    private var lastTransactionPaymentType: PaymentType? = null
-    private var lastTransactionAmount: BigDecimal? = null
+    private var lastTransactionId: String? = null
+    private var lastTransactionWasSuccessful: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,15 +43,22 @@ class MainActivity : ComponentActivity() {
 
         val launcher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                val transactionResponse =
+                    result.data?.getParcelableExtra<TransactionResponse>("TRANSACTION_RESULT")
                 val transactionId =
-                    result.data?.getStringExtra("RESULT_TRANSACTION_ID_EXTRA")
-                val status =
-                    result.data?.getStringExtra("RESULT_OPERATION_STATUS_EXTRA")
-                val message = result.data?.getStringExtra("RESULT_MESSAGE_EXTRA")
+                    result.data?.getStringExtra("TRANSACTION_ID")
 
-                Log.d("MainActivity", "Status: $status, Message: $message")
+
+                Log.d(
+                    "MainActivity",
+                    "TransactionResponse: $transactionResponse, TransactionId: $transactionId"
+                )
+                if (transactionResponse != null) {
+                    lastTransactionWasSuccessful =
+                        transactionResponse.status == OperationStatus.SUCCESS
+                }
                 if (transactionId != null) {
-                    lastTransactionRefundCode = transactionId
+                    lastTransactionId = transactionId
                 }
             }
 
@@ -96,11 +102,15 @@ class MainActivity : ComponentActivity() {
 
                             Button(
                                 onClick = {
-                                    if (lastTransactionRefundCode != null
-                                        && lastTransactionAmount != null
-                                        && lastTransactionPaymentType != null
+                                    if (lastTransactionId != null && lastTransactionWasSuccessful
                                     ) {
-
+                                        val intent =
+                                            Intent(this@MainActivity, PaymentActivity::class.java)
+                                        intent.putExtra(
+                                            "TRANSACTION_ID",
+                                            lastTransactionId
+                                        )
+                                        launcher.launch(intent)
                                     } else {
                                         Toast.makeText(
                                             this@MainActivity,

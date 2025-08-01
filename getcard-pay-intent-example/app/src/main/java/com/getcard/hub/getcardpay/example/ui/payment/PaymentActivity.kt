@@ -40,8 +40,14 @@ class PaymentActivity : ComponentActivity() {
                 )
                 setResultAndFinish(
                     this.transactionResponse,
+                    this.transactionId
                 )
             }
+        }
+        val isRefund = intent.getStringExtra("TRANSACTION_ID")
+        if (isRefund != null) {
+            viewModel.doRefund(isRefund)
+            return
         }
         setContent {
             PaymentNavigation(viewModel)
@@ -54,9 +60,11 @@ class PaymentActivity : ComponentActivity() {
      */
     private fun setResultAndFinish(
         transactionResponse: TransactionResponse,
+        transactionId: String? = null
     ) {
         Intent().apply {
             putExtra("TRANSACTION_RESULT", transactionResponse)
+            putExtra("TRANSACTION_ID", transactionId)
         }.run {
             setResult(RESULT_OK, this)
         }
