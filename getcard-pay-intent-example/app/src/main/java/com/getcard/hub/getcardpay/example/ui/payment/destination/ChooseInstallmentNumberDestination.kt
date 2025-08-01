@@ -87,31 +87,19 @@ fun PaymentDestination.ChooseInstallmentNumberPaymentDestination.Composable(
                         .padding(9.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Row(
-                        Modifier.height(60.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        for (i in 1..6) {
-                            InstallmentNumberButton(
-                                modifier = Modifier.weight(1f),
-                                onFinish = {},
-                                installmentNumber = i,
-                                onChooseInstallmentNumber = onChooseIntallmentNumber
-                            )
-                        }
-
-                    }
-                    Row(
-                        Modifier.height(60.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        for (i in 7..12) {
-                            InstallmentNumberButton(
-                                modifier = Modifier.weight(1f),
-                                onFinish = {},
-                                installmentNumber = i,
-                                onChooseInstallmentNumber = onChooseIntallmentNumber
-                            )
+                    (1..12).chunked(6).forEach { chunk ->
+                        Row(
+                            Modifier.height(60.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            chunk.forEach { i ->
+                                InstallmentNumberButton(
+                                    modifier = Modifier.weight(1f),
+                                    onFinish = {},
+                                    installmentNumber = i,
+                                    onChooseInstallmentNumber = onChooseIntallmentNumber
+                                )
+                            }
                         }
                     }
                 }

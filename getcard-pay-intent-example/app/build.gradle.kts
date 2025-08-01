@@ -40,10 +40,6 @@ android {
 }
 
 dependencies {
-
-    // Scope Provider
-    implementation(libs.hub.scope.provider)
-
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.androidx.core.ktx)

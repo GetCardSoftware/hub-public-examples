@@ -8,10 +8,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.getcard.hubinterface.OperationStatus
-import com.getcard.hubinterface.transaction.InstallmentType
-import com.getcard.hubinterface.transaction.PaymentType
-import com.getcard.hubinterface.transaction.TransactionResponse
+import com.getcard.hub.getcardpay.example.data.AvailableInstallmentType
+import com.getcard.hub.getcardpay.example.data.AvailableOperationStatus
+import com.getcard.hub.getcardpay.example.data.AvailablePaymentType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -26,9 +25,9 @@ class TransactionViewModel : ViewModel() {
 
     private val transactionLauncher = MutableStateFlow<ActivityResultLauncher<Intent>?>(null)
 
-    private val _paymentType = MutableStateFlow(PaymentType.CREDIT)
+    private val _paymentType = MutableStateFlow(AvailablePaymentType.CREDIT)
 
-    private val _installmentType = MutableStateFlow(InstallmentType.ONE_TIME)
+    private val _installmentType = MutableStateFlow(AvailableInstallmentType.ONE_TIME)
 
     private val _amount = MutableStateFlow(0)
     val amount = _amount.asStateFlow()
@@ -46,9 +45,9 @@ class TransactionViewModel : ViewModel() {
         _paymentState.value = PaymentState.ChoosingPaymentType
     }
 
-    fun onPaymentTypeSelected(paymentType: PaymentType) {
+    fun onPaymentTypeSelected(paymentType: AvailablePaymentType) {
         _paymentType.value = paymentType
-        if (paymentType == PaymentType.DEBIT || paymentType == PaymentType.PIX) {
+        if (paymentType == AvailablePaymentType.DEBIT || paymentType == AvailablePaymentType.PIX) {
             _paymentState.value = PaymentState.ProcessingPayment
             startTransaction()
             return
@@ -56,9 +55,9 @@ class TransactionViewModel : ViewModel() {
         _paymentState.value = PaymentState.ChoosingInstallmentType
     }
 
-    fun onInstallmentTypeSelected(type: InstallmentType) {
+    fun onInstallmentTypeSelected(type: AvailableInstallmentType) {
         _installmentType.value = type
-        if (type == InstallmentType.ONE_TIME) {
+        if (type == AvailableInstallmentType.ONE_TIME) {
             _paymentState.value = PaymentState.ProcessingPayment
             startTransaction()
             return
@@ -109,19 +108,19 @@ class TransactionViewModel : ViewModel() {
                         ?.also { Log.d("TestIntent", "RESULT_OPERATION_STATUS_EXTRA = $it") }
                     data.getStringExtra("RESULT_MESSAGE_EXTRA")
                         ?.also { Log.d("TestIntent", "RESULT_MESSAGE_EXTRA = $it") }
-                    val status = OperationStatus.valueOf(
+
+                    val status = AvailableOperationStatus.valueOf(
                         data.getStringExtra("RESULT_OPERATION_STATUS_EXTRA")!!
                     )
                     val message = data.getStringExtra("RESULT_MESSAGE_EXTRA")!!
                     val transactionId = data.getStringExtra("RESULT_TRANSACTION_ID_EXTRA")
                     val timestamp = data.getLongExtra("RESULT_TRANSACTION_TIMESTAMP_EXTRA", 0)
+
                     _paymentState.value = PaymentState.Finished(
-                        TransactionResponse(
-                            status = status,
-                            message = message,
-                            transactionTimestamp = timestamp,
-                        ),
-                        transactionId
+                        status = status,
+                        message = message,
+                        transactionTimestamp = timestamp,
+                        transactionId = transactionId
                     )
                 }
             }

@@ -20,15 +20,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.getcard.hub.getcardpay.example.R
+import com.getcard.hub.getcardpay.example.data.AvailablePaymentType
+import com.getcard.hub.getcardpay.example.data.toText
 import com.getcard.hub.getcardpay.example.ui.payment.components.OptionButton
 import com.getcard.hub.getcardpay.example.ui.payment.components.TopBar
 import com.getcard.hub.getcardpay.example.ui.theme.GetcardPayExampleTheme
-import com.getcard.hub.scopeprovider.pinpad.extension.toText
-import com.getcard.hubinterface.transaction.PaymentType
 
 @Composable
 fun PaymentDestination.ChoosePaymentTypePaymentDestination.Composable(
-    onChoosePaymentType: (PaymentType) -> Unit,
+    onChoosePaymentType: (AvailablePaymentType) -> Unit,
     onBackPressed: () -> Unit
 ) {
     Scaffold(
@@ -62,7 +62,7 @@ fun PaymentDestination.ChoosePaymentTypePaymentDestination.Composable(
                     .padding(9.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                PaymentType.entries.forEach { it ->
+                AvailablePaymentType.entries.forEach { it ->
                     OptionButton(
                         item = it,
                         itemText = { it.toText() },

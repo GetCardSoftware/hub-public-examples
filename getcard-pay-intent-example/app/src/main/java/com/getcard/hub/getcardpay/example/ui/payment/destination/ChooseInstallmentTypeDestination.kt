@@ -20,15 +20,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.getcard.hub.getcardpay.example.R
-import com.getcard.hub.getcardpay.example.extension.toText
+import com.getcard.hub.getcardpay.example.data.AvailableInstallmentType
+import com.getcard.hub.getcardpay.example.data.toText
 import com.getcard.hub.getcardpay.example.ui.payment.components.OptionButton
 import com.getcard.hub.getcardpay.example.ui.payment.components.TopBar
 import com.getcard.hub.getcardpay.example.ui.theme.GetcardPayExampleTheme
-import com.getcard.hubinterface.transaction.InstallmentType
 
 @Composable
 fun PaymentDestination.ChooseInstallmentTypePaymentDestination.Composable(
-    onChooseIntallmentType: (InstallmentType) -> Unit,
+    onChooseIntallmentType: (AvailableInstallmentType) -> Unit,
     onBackPressed: () -> Unit,
 ) {
     Scaffold(
@@ -62,7 +62,7 @@ fun PaymentDestination.ChooseInstallmentTypePaymentDestination.Composable(
                     .padding(9.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                InstallmentType.entries.filter { it != InstallmentType.INSTALLMENTS }
+                AvailableInstallmentType.entries
                     .forEach { it ->
                         OptionButton(
                             item = it,

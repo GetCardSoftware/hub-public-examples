@@ -2,26 +2,28 @@
 
 [![Kotlin](https://img.shields.io/badge/language-Kotlin-blue?logo=kotlin)](https://kotlinlang.org)
 [![Jetpack Compose](https://img.shields.io/badge/UI-Jetpack%20Compose-purple?logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
-[![minSdk](https://img.shields.io/badge/minSdk-24-brightgreen)](https://developer.android.com/about/versions/14/get)
+[![minSdk](https://img.shields.io/badge/minSdk-24-brightgreen)](https://developer.android.com/about/versions/6.0)
 [![compileSdk](https://img.shields.io/badge/compileSdk-35-blueviolet)](https://developer.android.com/about/versions/14/get)
 
 Este projeto é um exemplo completo, desenvolvido com **Kotlin** e **Jetpack Compose**, para
-facilitar a integração com as bibliotecas da **GetCard Providers**.
+facilitar a integração com o aplicativo **GetCard Pay** por meio de **Intents**.
 
 ## 📦 Sobre o projeto
 
-Este exemplo demonstra como iniciar pagamentos e estornar transações utilizando nossas bibliotecas.
-É uma ótima referência para desenvolvedores que desejam entender a integração passo a passo com
-nossos serviços.
+Este exemplo demonstra como realizar um pagamento e estornar a última transação utilizando o *
+*GetCard Pay**, sem a necessidade de comunicação direta com servidores ou configurações de rede.
+Toda a integração é feita por meio de **Intents**, de forma simples e direta.
+
+É ideal para desenvolvedores que desejam integrar rapidamente o GetCard Pay em seus próprios
+aplicativos.
 
 ## ✅ Pré-requisitos
 
 - Android Studio
 - SDK Android 23+
-- Token de autenticação válido
-- Configurações do servidor Scope (caso use o `ScopeProvider`)
 - **ScopeProvider** suporta:
     - `minSdk 24 (Android 7)`
+- O app **GetCard Pay** instalado e **já configurado** no dispositivo
 
 ## 🚀 Como usar
 
@@ -35,40 +37,20 @@ git clone git@github.com:GetCardSoftware/hub-public-examples.git
 
 2. Abra o projeto no Android Studio.
 
-3. Configure o token de autenticação:
+3. Execute o projeto em um dispositivo Android que tenha o **GetCard Pay instalado e configurado**.
 
-   No arquivo `Settings.kt`, defina o token recebido:
+4. Utilize os botões da tela inicial:
 
-   ```kotlin
-   const val AUTH_TOKEN = "SEU_TOKEN_DE_AUTENTICACAO"
-   ```
-
-4. Configure o servidor Scope (se aplicável):
-
-   Ainda no `Settings.kt`, adicione as credenciais do seu ambiente:
-
-   ```kotlin
-   val PROVIDER_CONFIG = PaymentProviderConfig.builder()
-       .setIp("SEU_IP")
-       .setPort(0u) // Porta do Provider
-       .setCompany("CODIGO_DA_EMPRESA")
-       .setCompanyBranch("CODIGO_DA_FILIAL")
-       .setTerminal("CODIGO_DO_TERMINAL/PDV")
-       .build()
-   ```
-
-5. Execute o projeto e explore a integração!
-
-   Use os botões "Iniciar Pagamento" e "Estornar Última Transação" para simular transações reais.
+   * **"Iniciar Pagamento"**: envia uma requisição para o GetCard Pay iniciar uma transação.
+   * **"Estornar Última Transação"**: envia uma requisição de estorno da transação anterior (caso exista).
 
 ## 📚 Leitura recomendada
 
-Analise o código fonte deste exemplo para compreender como as bibliotecas foram estruturadas e
-integradas. Isso irá te ajudar a replicar essa arquitetura na sua aplicação.
+Recomendamos explorar o código-fonte deste exemplo para entender como realizar a integração com o GetCard Pay via `Intent` de forma segura e reutilizável.
 
 ## 📖 Bibliotecas utilizadas
 
-* [ScopeProvider](https://doc-hubpay.tefbr.com.br/providers/scope/2.3.x/intro)
+Este exemplo **não utiliza bibliotecas de provider** diretamente, apenas a API pública de integração via `Intent` com o GetCard Pay.
 
 ---
 

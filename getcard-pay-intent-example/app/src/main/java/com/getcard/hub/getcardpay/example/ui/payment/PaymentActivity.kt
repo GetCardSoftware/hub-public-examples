@@ -6,8 +6,8 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
+import com.getcard.hub.getcardpay.example.data.AvailableOperationStatus
 import com.getcard.hub.getcardpay.example.ui.payment.destination.PaymentNavigation
-import com.getcard.hubinterface.transaction.TransactionResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -36,10 +36,14 @@ class PaymentActivity : ComponentActivity() {
             viewModel.paymentState.filter { it is PaymentState.Finished }.first().run {
                 Log.d(
                     TAG,
-                    "onCreate PaymentActivity, transactionResponse: ${(this as PaymentState.Finished).transactionResponse}"
+                    "Transaction Finished: Status = ${(this as PaymentState.Finished).status} | " +
+                            "Message = ${(this).message} | " +
+                            "Timestamp = ${(this).transactionTimestamp}"
                 )
                 setResultAndFinish(
-                    this.transactionResponse,
+                    this.status,
+                    this.message,
+                    this.transactionTimestamp,
                     this.transactionId
                 )
             }
@@ -59,11 +63,15 @@ class PaymentActivity : ComponentActivity() {
      * finaliza-la.
      */
     private fun setResultAndFinish(
-        transactionResponse: TransactionResponse,
+        status: AvailableOperationStatus,
+        message: String,
+        transactionTimestamp: Long,
         transactionId: String? = null
     ) {
         Intent().apply {
-            putExtra("TRANSACTION_RESULT", transactionResponse)
+            putExtra("TRANSACTION_STATUS", status.toString())
+            putExtra("TRANSACTION_MESSAGE", message)
+            putExtra("TRANSACTION_TIMESTAMP", transactionTimestamp)
             putExtra("TRANSACTION_ID", transactionId)
         }.run {
             setResult(RESULT_OK, this)

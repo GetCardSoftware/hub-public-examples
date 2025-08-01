@@ -27,10 +27,9 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.getcard.hub.getcardpay.example.data.AvailableOperationStatus
 import com.getcard.hub.getcardpay.example.ui.payment.PaymentActivity
 import com.getcard.hub.getcardpay.example.ui.theme.GetcardPayExampleTheme
-import com.getcard.hubinterface.OperationStatus
-import com.getcard.hubinterface.transaction.TransactionResponse
 
 class MainActivity : ComponentActivity() {
 
@@ -43,20 +42,31 @@ class MainActivity : ComponentActivity() {
 
         val launcher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                val transactionResponse =
-                    result.data?.getParcelableExtra<TransactionResponse>("TRANSACTION_RESULT")
+                if (result.data == null) {
+                    return@registerForActivityResult
+                }
+
+                val status = result.data?.getStringExtra("TRANSACTION_STATUS")
+                val message = result.data?.getStringExtra("TRANSACTION_MESSAGE")
+                val transactionTimestamp =
+                    result.data?.getLongExtra("TRANSACTION_TIMESTAMP", 0)
                 val transactionId =
                     result.data?.getStringExtra("TRANSACTION_ID")
 
+                if (status == null) {
+                    Toast.makeText(this, "Ocorreu um erro na transação.", Toast.LENGTH_SHORT).show()
+                    return@registerForActivityResult
+                }
 
                 Log.d(
                     "MainActivity",
-                    "TransactionResponse: $transactionResponse, TransactionId: $transactionId"
+                    "Transaction Finished: Status = $status, " +
+                            "Message = $message, " +
+                            "Timestamp = $transactionTimestamp, " +
+                            "TransactionId: $transactionId"
                 )
-                if (transactionResponse != null) {
-                    lastTransactionWasSuccessful =
-                        transactionResponse.status == OperationStatus.SUCCESS
-                }
+                lastTransactionWasSuccessful =
+                    status == AvailableOperationStatus.SUCCESS.toString()
                 if (transactionId != null) {
                     lastTransactionId = transactionId
                 }
