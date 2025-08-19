@@ -3,7 +3,6 @@ package com.getcard.hub.providers.example
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.getcard.hub.scopeprovider.pinpad.ScopeProvider
@@ -31,9 +30,13 @@ class StartTransactionActivity : ComponentActivity() {
 
         val authParams = intent.getParcelableExtra<AuthParams>("AUTH_PARAMS")
         if (authParams == null) {
-            Toast.makeText(this, "Nenhum parâmetro de autenticação encontrado", Toast.LENGTH_LONG)
-                .show()
-            finish()
+            setResultAndFinish(
+                TransactionResponse(
+                    status = OperationStatus.FAILED,
+                    message = "Nenhum parâmetro de autenticação encontrado",
+                    transactionTimestamp = System.currentTimeMillis()
+                )
+            )
             return
         }
 
@@ -41,8 +44,13 @@ class StartTransactionActivity : ComponentActivity() {
 
         val paymentParams = intent.getParcelableExtra<TransactionParams>("TRANSACTION_PARAMS")
         if (paymentParams == null) {
-            Toast.makeText(this, "Nenhum parâmetro transação encontrado", Toast.LENGTH_LONG).show()
-            finish()
+            setResultAndFinish(
+                TransactionResponse(
+                    status = OperationStatus.FAILED,
+                    message = "Nenhum parâmetro de transação encontrado",
+                    transactionTimestamp = System.currentTimeMillis()
+                )
+            )
             return
         }
 
@@ -64,11 +72,18 @@ class StartTransactionActivity : ComponentActivity() {
                     transactionTimestamp = System.currentTimeMillis()
                 )
             }
-
-            val responseIntent = Intent()
-            responseIntent.putExtra("TRANSACTION_RESULT", result)
-            setResult(RESULT_OK, responseIntent)
-            finish()
+            setResultAndFinish(result)
         }
+    }
+
+    private fun setResultAndFinish(
+        transactionResponse: TransactionResponse,
+    ) {
+        Intent().apply {
+            putExtra("TRANSACTION_RESULT", transactionResponse)
+        }.run {
+            setResult(RESULT_OK, this)
+        }
+        finish()
     }
 }

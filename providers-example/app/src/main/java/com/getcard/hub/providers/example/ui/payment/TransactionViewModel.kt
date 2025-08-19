@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.getcard.hub.providers.example.Settings
 import com.getcard.hub.providers.example.StartTransactionActivity
+import com.getcard.hubinterface.OperationStatus
 import com.getcard.hubinterface.authentication.AuthParams
 import com.getcard.hubinterface.transaction.InstallmentType
 import com.getcard.hubinterface.transaction.PaymentType
@@ -27,16 +28,16 @@ class TransactionViewModel : ViewModel() {
 
     private val activity = mutableStateOf<ComponentActivity?>(null)
 
-    private val transactionLauncher = MutableStateFlow<ActivityResultLauncher<Intent>?>(null)
-
-    private val _paymentType = MutableStateFlow(PaymentType.CREDIT)
-
-    private val _installmentType = MutableStateFlow(InstallmentType.ONE_TIME)
+    private var transactionLauncher: ActivityResultLauncher<Intent>? = null
 
     private val _amount = MutableStateFlow(0)
     val amount = _amount.asStateFlow()
 
-    private val _installments = MutableStateFlow(1)
+    private var paymentType = PaymentType.CREDIT
+
+    private var installmentType = InstallmentType.ONE_TIME
+
+    private var installments = 1
 
     private val _paymentState = MutableStateFlow<PaymentState>(PaymentState.ChoosingPaymentAmount)
     val paymentState = _paymentState.asStateFlow()
@@ -50,7 +51,7 @@ class TransactionViewModel : ViewModel() {
     }
 
     fun onPaymentTypeSelected(paymentType: PaymentType) {
-        _paymentType.value = paymentType
+        this@TransactionViewModel.paymentType = paymentType
         if (paymentType == PaymentType.DEBIT || paymentType == PaymentType.PIX) {
             _paymentState.value = PaymentState.ProcessingPayment
             startTransaction()
@@ -60,7 +61,7 @@ class TransactionViewModel : ViewModel() {
     }
 
     fun onInstallmentTypeSelected(type: InstallmentType) {
-        _installmentType.value = type
+        installmentType = type
         if (type == InstallmentType.ONE_TIME) {
             _paymentState.value = PaymentState.ProcessingPayment
             startTransaction()
@@ -85,7 +86,7 @@ class TransactionViewModel : ViewModel() {
     }
 
     fun onInstallmentNumberSelected(number: Int) {
-        _installments.value = number
+        installments = number
         _paymentState.value = PaymentState.ProcessingPayment
         startTransaction()
     }
@@ -97,7 +98,7 @@ class TransactionViewModel : ViewModel() {
      */
     fun setActivity(activity: ComponentActivity) {
         this.activity.value = activity
-        transactionLauncher.value =
+        transactionLauncher =
             activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 val response =
                     result.data?.getParcelableExtra<TransactionResponse>("TRANSACTION_RESULT")
@@ -106,7 +107,15 @@ class TransactionViewModel : ViewModel() {
                     _paymentState.value = PaymentState.Finished(
                         response
                     )
+                    return@registerForActivityResult
                 }
+                _paymentState.value = PaymentState.Finished(
+                    TransactionResponse(
+                        status = OperationStatus.FAILED,
+                        message = "Erro ao realizar a transação",
+                        transactionTimestamp = System.currentTimeMillis()
+                    )
+                )
             }
     }
 
@@ -121,13 +130,13 @@ class TransactionViewModel : ViewModel() {
             "TRANSACTION_PARAMS",
             TransactionParams(
                 amount = BigDecimal(_amount.value),
-                paymentType = _paymentType.value,
-                installmentType = _installmentType.value,
-                installmentNumber = _installments.value
+                paymentType = paymentType,
+                installmentType = installmentType,
+                installmentNumber = installments
             )
         )
         intent.putExtra("AUTH_PARAMS", AuthParams(Settings.AUTH_TOKEN))
-        transactionLauncher.value?.launch(intent)
+        transactionLauncher?.launch(intent)
     }
 
 }

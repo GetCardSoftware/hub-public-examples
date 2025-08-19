@@ -17,13 +17,6 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            url = uri("https://dev-hubpay.tefbr.com.br/repo/repository/libs-getcard/")
-            credentials {
-                username = "admin"
-                password = providers.gradleProperty("GETCARD_HOMOLOG_PASSWORD").orNull
-            }
-        }
-        maven {
             url = uri("https://dev-hubpay.tefbr.com.br/repo/repository/getcard-public/")
             credentials {
                 username = "getcard-public"
