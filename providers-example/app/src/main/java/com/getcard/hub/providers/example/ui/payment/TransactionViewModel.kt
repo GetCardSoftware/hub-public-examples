@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.getcard.hub.providers.example.Settings
 import com.getcard.hub.providers.example.StartTransactionActivity
@@ -26,7 +25,7 @@ import java.math.BigDecimal
  */
 class TransactionViewModel : ViewModel() {
 
-    private val activity = mutableStateOf<ComponentActivity?>(null)
+    private var intent: Intent? = null
 
     private var transactionLauncher: ActivityResultLauncher<Intent>? = null
 
@@ -97,7 +96,7 @@ class TransactionViewModel : ViewModel() {
      * e alterando o estado da operação de pagamento.
      */
     fun setActivity(activity: ComponentActivity) {
-        this.activity.value = activity
+        intent = Intent(activity, StartTransactionActivity::class.java)
         transactionLauncher =
             activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 val response =
@@ -125,8 +124,10 @@ class TransactionViewModel : ViewModel() {
      * chamada de [StartTransactionActivity].
      */
     fun startTransaction() {
-        val intent = Intent(activity.value, StartTransactionActivity::class.java)
-        intent.putExtra(
+        if (intent == null) {
+            throw IllegalStateException("a função setActivity deve ser chamada antes")
+        }
+        intent!!.putExtra(
             "TRANSACTION_PARAMS",
             TransactionParams(
                 amount = BigDecimal(_amount.value),
@@ -135,8 +136,8 @@ class TransactionViewModel : ViewModel() {
                 installmentNumber = installments
             )
         )
-        intent.putExtra("AUTH_PARAMS", AuthParams(Settings.AUTH_TOKEN))
-        transactionLauncher?.launch(intent)
+        intent!!.putExtra("AUTH_PARAMS", AuthParams(Settings.AUTH_TOKEN))
+        transactionLauncher?.launch(intent!!)
     }
 
 }
