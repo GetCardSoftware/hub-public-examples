@@ -25,6 +25,10 @@ import java.math.BigDecimal
  */
 class TransactionViewModel : ViewModel() {
 
+    companion object {
+        private const val TAG = "TransactionViewModel"
+    }
+
     private var intent: Intent? = null
 
     private var transactionLauncher: ActivityResultLauncher<Intent>? = null
@@ -101,7 +105,7 @@ class TransactionViewModel : ViewModel() {
             activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 val response =
                     result.data?.getParcelableExtra<TransactionResponse>("TRANSACTION_RESULT")
-                Log.d("MainActivity", "Response: $response")
+                Log.d(TAG, "Response: $response")
                 if (response != null) {
                     _paymentState.value = PaymentState.Finished(
                         response
