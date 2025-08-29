@@ -87,7 +87,7 @@ fun PaymentDestination.ChooseInstallmentNumberPaymentDestination.Composable(
                         .padding(9.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    (1..12).chunked(6).forEach { chunk ->
+                    (2..13).chunked(6).forEach { chunk ->
                         Row(
                             Modifier.height(60.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
