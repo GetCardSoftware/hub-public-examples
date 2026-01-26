@@ -216,7 +216,7 @@ class MainActivity : ComponentActivity() {
             onClick = {
                 val printIntent = Intent()
                 printIntent.setClassName(
-                    "com.getcard.hub.getcardpayapp",
+                    "com.getcard.hub.getcardpayapp.homolog",
                     "com.getcard.hub.getcardpayapp.ui.PrintActivity"
                 )
                 printIntent.putExtra("RECEIPT", Mocks.generateSitefReceipt())
@@ -267,7 +267,7 @@ class MainActivity : ComponentActivity() {
                 )
                 val printIntent = Intent().apply {
                     setClassName(
-                        "com.getcard.hub.getcardpayapp",
+                        "com.getcard.hub.getcardpayapp.homolog",
                         "com.getcard.hub.getcardpayapp.ui.PrintActivity"
                     )
                     putExtra("RECEIPT_IMAGE_URI", uri)

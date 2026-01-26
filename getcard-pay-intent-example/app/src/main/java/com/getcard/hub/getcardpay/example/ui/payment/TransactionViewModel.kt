@@ -143,7 +143,7 @@ class TransactionViewModel : ViewModel() {
 
         val paymentIntent = Intent()
         paymentIntent.setClassName(
-            "com.getcard.hub.getcardpayapp",
+            "com.getcard.hub.getcardpayapp.homolog",
             "com.getcard.hub.getcardpayapp.ui.PaymentActivity"
         )
         paymentIntent.putExtra("AMOUNT_EXTRA", _amount.value) // Valor da transação EM CENTAVOS
@@ -176,7 +176,7 @@ class TransactionViewModel : ViewModel() {
         }
         val refundIntent = Intent()
         refundIntent.setClassName(
-            "com.getcard.hub.getcardpayapp",
+            "com.getcard.hub.getcardpayapp.homolog",
             "com.getcard.hub.getcardpayapp.ui.RefundActivity"
         )
         refundIntent.putExtra(
