@@ -1,0 +1,82 @@
+package com.getcard.hub.getcardpay.example.ui.payment
+
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.lifecycle.lifecycleScope
+import com.getcard.hub.getcardpay.example.data.AvailableOperationStatus
+import com.getcard.hub.getcardpay.example.ui.payment.destination.PaymentNavigation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+
+/**
+ * Activity responsável por interagir com o usuário e coletar os dados
+ * necessários para iniciar uma transação.
+ * Ela também verifica o estado da transação e envia o resultado para a activity principal
+ * [com.getcard.hub.getcardpay.example.MainActivity]
+ */
+class PaymentActivity : ComponentActivity() {
+    companion object {
+        private const val TAG = "PaymentActivity"
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val viewModel = TransactionViewModel()
+        viewModel.setActivity(this@PaymentActivity)
+        /**
+         * Verifica o estado da transação e caso esteja finalizada, envia o resultado
+         * de volta para a MainActivity.
+         */
+        lifecycleScope.launch(Dispatchers.IO) {
+            viewModel.paymentState.filter { it is PaymentState.Finished }.first().run {
+                Log.d(
+                    TAG,
+                    "Transaction Finished: Status = ${(this as PaymentState.Finished).status} | " +
+                            "Message = ${(this).message} | " +
+                            "Timestamp = ${(this).transactionTimestamp}"
+                )
+                setResultAndFinish(
+                    this.status,
+                    this.message,
+                    this.transactionTimestamp,
+                    this.transactionId
+                )
+            }
+        }
+        val isRefund = intent.getStringExtra("TRANSACTION_ID")
+        if (isRefund != null) {
+            viewModel.doRefund(isRefund)
+            return
+        }
+        setContent {
+            PaymentNavigation(viewModel)
+        }
+    }
+
+    /**
+     * Função auxiliar responsável apenas por definir o resultado da activity e
+     * finaliza-la.
+     */
+    private fun setResultAndFinish(
+        status: AvailableOperationStatus,
+        message: String,
+        transactionTimestamp: Long,
+        transactionId: String? = null
+    ) {
+        Intent().apply {
+            putExtra("TRANSACTION_STATUS", status.toString())
+            putExtra("TRANSACTION_MESSAGE", message)
+            putExtra("TRANSACTION_TIMESTAMP", transactionTimestamp)
+            putExtra("TRANSACTION_ID", transactionId)
+        }.run {
+            setResult(RESULT_OK, this)
+        }
+        finish()
+    }
+}
+

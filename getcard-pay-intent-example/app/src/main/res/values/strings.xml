@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Getcard Pay Example</string>
+    <string name="title_activity_payment">PaymentActivity</string>
+</resources>
