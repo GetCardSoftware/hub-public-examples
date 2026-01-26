@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
-import com.getcard.hub.scopeprovider.pinpad.ScopeProvider
+import com.getcard.hub.provider.scope.ScopeProvider
 import com.getcard.hubinterface.OperationStatus
 import com.getcard.hubinterface.authentication.AuthParams
 import com.getcard.hubinterface.transaction.TransactionParams
@@ -55,7 +55,7 @@ class StartTransactionActivity : ComponentActivity() {
         }
 
         Log.d(TAG, "PaymentParams: $paymentParams")
-        val provider = ScopeProvider(Settings.PROVIDER_CONFIG)
+        val provider = ScopeProvider(Settings.PROVIDER_CONFIG, Preferences.getBtDeviceAddress())
 
         lifecycleScope.launch {
             val result = try {

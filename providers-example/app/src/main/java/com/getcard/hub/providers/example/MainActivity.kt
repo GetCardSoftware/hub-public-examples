@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,10 +25,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.getcard.hub.providers.example.ui.payment.PaymentActivity
+import com.getcard.hub.providers.example.ui.payment.components.CustomDropdownMenu
 import com.getcard.hub.providers.example.ui.theme.ProvidersExampleTheme
 import com.getcard.hubinterface.OperationStatus
 import com.getcard.hubinterface.authentication.AuthParams
@@ -46,6 +54,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        Preferences.init(this.applicationContext)
+
         val launcher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 val response =
@@ -63,6 +73,7 @@ class MainActivity : ComponentActivity() {
             }
 
         setContent {
+
             ProvidersExampleTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Box(
@@ -74,12 +85,13 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .align(Alignment.Center)
                                 .padding(horizontal = 32.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
                                 text = "Exemplo de Integração",
                                 style = MaterialTheme.typography.headlineMedium,
-                                modifier = Modifier.padding(bottom = 32.dp)
+                                modifier = Modifier.padding(bottom = 24.dp)
                             )
 
                             Button(
@@ -88,9 +100,7 @@ class MainActivity : ComponentActivity() {
                                         Intent(this@MainActivity, PaymentActivity::class.java)
                                     launcher.launch(intent)
                                 },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp)
+                                modifier = Modifier.fillMaxWidth()
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.PlayArrow,
@@ -131,9 +141,7 @@ class MainActivity : ComponentActivity() {
                                         ).show()
                                     }
                                 },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp)
+                                modifier = Modifier.fillMaxWidth()
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Refresh,
@@ -142,22 +150,62 @@ class MainActivity : ComponentActivity() {
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text("Estornar Última Transação")
                             }
-                        }
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(bottom = 16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Bottom
-                        ) {
 
-                            Text(
-                                text = "Versão 1.0.0",
-                                style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(top = 8.dp)
+                            // Bluetooth
+                            var hasBluetoothPermission by remember { mutableStateOf(false) }
+
+                            var btPairedDevices by remember {
+                                mutableStateOf<List<BluetoothHelper.BtDeviceInfo?>>(
+                                    listOf(null)
+                                )
+                            }
+
+                            var selectedBtDevice by remember {
+                                mutableStateOf<BluetoothHelper.BtDeviceInfo?>(null)
+                            }
+
+                            val permissionLauncher = rememberLauncherForActivityResult(
+                                contract = ActivityResultContracts.RequestMultiplePermissions()
+                            ) { permissions ->
+                                val allGranted = permissions.values.all { it }
+                                hasBluetoothPermission = allGranted
+                            }
+
+                            LaunchedEffect(Unit) {
+                                permissionLauncher.launch(BluetoothHelper.bluetoothPermissions)
+                            }
+
+                            LaunchedEffect(hasBluetoothPermission) {
+                                if (hasBluetoothPermission) {
+                                    btPairedDevices = BluetoothHelper.getPairedDevices(this@MainActivity).plus(null)
+                                    selectedBtDevice = btPairedDevices.find { it?.address == Preferences.getBtDeviceAddress() }
+                                }
+                            }
+
+                            CustomDropdownMenu(
+                                "PIN Pad Bluetooth",
+                                btPairedDevices,
+                                selectedBtDevice,
+                                { it?.name ?: "Não utiliza dispositivo Bluetooth" },
+                                {
+                                    selectedBtDevice = it
+                                    Preferences.saveBtDeviceAddress(it?.address)
+                                },
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
+
+
+                        Text(
+                            text = "Versão 1.0.0",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp)
+                                .align(Alignment.BottomCenter)
+                        )
                     }
                 }
             }
